@@ -1,6 +1,14 @@
 # AWS-Lambda-NodeJS-Boilerplate
 Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
+- API Gateway → Exposes endpoints for CRUD operations.
+- AWS Lambda → Handles business logic for order management.
+- Amazon DocumentDB (MongoDB-compatible) → Stores order data.
+- Amazon SQS → Handles message queue processing.
+- Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
+- AWS SAM (Serverless Application Model) → Defines infrastructure as code.
+
+
 ### Commands you can use next
 - Create pipeline: ```cd order-manager && sam pipeline init --bootstrap```
 - Validate SAM template: ```cd order-manager && sam validate```
