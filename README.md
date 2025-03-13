@@ -8,6 +8,20 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 - Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
 - AWS SAM (Serverless Application Model) → Defines infrastructure as code.
 
+---
+
+1️⃣ **template.yaml (AWS SAM Template)**
+> Defines the Lambda functions, API Gateway, SQS, and ElastiCache.
+
+1. Create ```mongodb``` test instance (preferably local), Configure your mongodb url at ```DB_URI``` in template.yaml
+2. Create ```redis``` test instance at REDIS_HOST
+```
+docker run --name local-redis -p 6379:6379 -d redis
+
+This command will start a Redis server on localhost at port 6379.
+
+```
+
 
 ### Commands you can use next
 - Create pipeline: ```cd order-manager && sam pipeline init --bootstrap```
@@ -81,6 +95,11 @@ sam sync --watch
 In your command line, from the sam-app project directory, run the following:
 ```
 sam local invoke
+
+// To call a specific function
+sam local invoke CreateOrderFunction --event events/createOrder.json
+
+
 ```
 
 ![alt text](image-2.png)
