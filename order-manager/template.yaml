@@ -34,7 +34,7 @@ Resources:
         - AWSLambdaBasicExecutionRole
       Environment:
         Variables:
-          DB_URI: "mongodb+srv://devuser:CPzB4O1FwPPAIZKE@cluster0.n1uol.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+          DB_URI: ""
           REDIS_HOST: !GetAtt OrderCache.RedisEndpoint.Address
           SQS_URL: !Ref OrderQueue
       Events:
