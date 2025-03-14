@@ -99,6 +99,9 @@ sam local invoke
 // To call a specific function
 sam local invoke CreateOrderFunction --event events/createOrder.json
 
+// To pass local env variables - only for local testing
+sam local invoke CreateOrderFunction --event events/createOrder.json --env-vars env.json
+
 
 ```
 
