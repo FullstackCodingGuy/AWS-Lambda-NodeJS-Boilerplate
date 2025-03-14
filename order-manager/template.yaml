@@ -60,6 +60,34 @@ Resources:
             Path: /orders
             Method: post
             RestApiId: !Ref OrderApi
+          
+  GetMyOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/getMyOrders.handler
+      Runtime: nodejs22.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaSQSQueueExecutionRole
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
+      Environment:
+        Variables:
+          HOSTING_ENV: !Ref HOSTINGENV
+          DB_URI: ""
+          REDIS_HOST: !GetAtt OrderCache.RedisEndpoint.Address
+          MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /myorders
+            Method: post
+            RestApiId: !Ref OrderApi
 
   ProcessQueueFunction:
     Type: AWS::Serverless::Function
