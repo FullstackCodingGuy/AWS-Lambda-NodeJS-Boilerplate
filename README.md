@@ -66,7 +66,15 @@ curl https://ets1gv8lxi.execute-api.us-west-2.amazonaws.com/Prod/hello/
 
 2. Using sam command
 
-```sam remote invoke HelloWorldFunction --stack-name sam-app```
+```
+# example
+sam remote invoke HelloWorldFunction --stack-name sam-app
+
+# real
+
+sam remote invoke CreateOrderFunction --stack-name order-manager-stack
+
+```
 
 ![alt text](image-1.png)
 
@@ -207,3 +215,5 @@ To fix this:
 ### References
 
 - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html
+- [A Practical Guide to Surviving AWS SAM](https://medium.com/bip-xtech/a-practical-guide-to-surviving-aws-sam-d8ab141b3d25)
+- [Different Ways of Passing Parameters Securely in CloudFormation](https://tutorialsdojo.com/different-ways-of-passing-parameters-securely-in-cloudformation/)

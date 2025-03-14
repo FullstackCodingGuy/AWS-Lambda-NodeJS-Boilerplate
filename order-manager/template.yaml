@@ -12,31 +12,133 @@ Parameters:
     Type: String
     Description: "Ex: Development, Staging, Production"
     Default: "Production"
-  
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: "The VPC ID where resources will be created"
-  SubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: "The subnet IDs within the VPC"
-  SecurityGroupIds:
-    Type: List<AWS::EC2::SecurityGroup::Id>
-    Description: "The security group IDs within the VPC"
-
 
 Resources:
 
+  # **IAM Role for Lambda (with Secrets Manager permissions)**
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # ✅ Allow Lambda to write logs
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+              # ✅ Allow Lambda to retrieve secrets from AWS Secrets Manager
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: "*"
+                # Resource: !Sub arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:DocumentDBSecret-*
+              # ✅ FIX: Allow Lambda to create, delete, and describe network interfaces (ENIs)
+              - Effect: Allow
+                Action:
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:AssignPrivateIpAddresses
+                  - ec2:UnassignPrivateIpAddresses
+                Resource: "*"
+
+              # ✅ FIX: Allow Lambda to attach network interfaces to itself
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:ModifyNetworkInterfaceAttribute
+                Resource: "*"
+
+  # **1️⃣ VPC for DocumentDB & Lambda**
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+  
+  # **2️⃣ Private Subnets (for DocumentDB & Lambda)**
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.1.0/24"
+      AvailabilityZone: !Select [0, !GetAZs us-east-1]
+  
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.2.0/24"
+      AvailabilityZone: !Select [1, !GetAZs us-east-1]
+
+  # **3️⃣ Security Group for Lambda function**
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for Lambda function"
+      VpcId: !Ref MyVPC
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          CidrIp: "10.0.0.0/16" # ✅ Allow Lambda to talk to DocumentDB
+
+  # **3️⃣ Security Group for DocumentDB**
+  DocDBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Allow Lambda access to DocumentDB"
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+          # CidrIp: "10.0.0.0/16"
+
+
+  # **4️⃣ Amazon DocumentDB Cluster**
+  MyDocumentDBCluster:
+    Type: AWS::DocDB::DBCluster
+    Properties:
+      MasterUsername: !Sub "{{resolve:secretsmanager:DocumentDBSecret:SecretString:username}}"
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:DocumentDBSecret:SecretString:password}}"
+      # ManageMasterUserPassword: true  # ✅ Secure AWS-managed password
+      DBSubnetGroupName: !Ref DocDBSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref DocDBSecurityGroup
+
+  DocDBSubnetGroup:
+    Type: AWS::DocDB::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: "Subnet group for DocumentDB"
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  # **5️⃣ API Gateway**
   OrderApi:
     Type: AWS::Serverless::Api
     Properties:
       Name: OrderServiceAPI
       StageName: v1
 
-  OrderQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: OrderQueue
-
+  # **6️⃣ Create Order Lambda function**
   CreateOrderFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -55,13 +157,20 @@ Resources:
       Environment:
         Variables:
           HOSTING_ENV: !Ref HOSTINGENV
-          DB_URI: ""
+          DB_URI: !Sub "mongodb://{{resolve:secretsmanager:DocumentDBSecret:SecretString:username}}:{{resolve:secretsmanager:DocumentDBSecret:SecretString:password}}@${MyDocumentDBCluster.Endpoint}:${MyDocumentDBCluster.Port}/orders"
           REDIS_HOST: ""
-          SQS_URL: !Ref OrderQueue
+          # SQS_URL: !Ref OrderQueue
           MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
+      Role: !GetAtt LambdaExecutionRole.Arn
       VpcConfig:
-        SecurityGroupIds: !Ref SecurityGroupIds
-        SubnetIds: !Ref SubnetIds
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+      # VpcConfig:
+      #   SecurityGroupIds: !Ref SecurityGroupIds
+      #   SubnetIds: !Ref SubnetIds
       Events:
         ApiEvent:
           Type: Api
@@ -70,38 +179,45 @@ Resources:
             Method: post
             RestApiId: !Ref OrderApi
           
-  GetMyOrdersFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/
-      Handler: handlers/getMyOrders.handler
-      Runtime: nodejs22.x
-      MemorySize: 128
-      Timeout: 10
-      Policies:
-        - AWSLambdaVPCAccessExecutionRole
-        - AmazonDynamoDBFullAccess
-        - AWSLambdaSQSQueueExecutionRole
-        - AWSLambdaBasicExecutionRole
-        - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
-      Environment:
-        Variables:
-          HOSTING_ENV: !Ref HOSTINGENV
-          DB_URI: ""
-          REDIS_HOST: ""
-          MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
-      VpcConfig:
-        SecurityGroupIds: !Ref SecurityGroupIds
-        SubnetIds: !Ref SubnetIds
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /myorders
-            Method: post
-            RestApiId: !Ref OrderApi
+  # **7️⃣ Get My Orders Lambda function**
+  # GetMyOrdersFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: src/
+  #     Handler: handlers/getMyOrders.handler
+  #     Runtime: nodejs22.x
+  #     MemorySize: 128
+  #     Timeout: 10
+  #     Policies:
+  #       - AWSLambdaVPCAccessExecutionRole
+  #       - AmazonDynamoDBFullAccess
+  #       - AWSLambdaSQSQueueExecutionRole
+  #       - AWSLambdaBasicExecutionRole
+  #       - AWSSecretsManagerGetSecretValuePolicy:
+  #           SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
+  #     Environment:
+  #       Variables:
+  #         HOSTING_ENV: !Ref HOSTINGENV
+  #         DB_URI: ""
+  #         REDIS_HOST: ""
+  #         MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
+  #     VpcConfig:
+  #       SecurityGroupIds: !Ref SecurityGroupIds
+  #       SubnetIds: !Ref SubnetIds
+  #     Events:
+  #       ApiEvent:
+  #         Type: Api
+  #         Properties:
+  #           Path: /myorders
+  #           Method: get
+  #           RestApiId: !Ref OrderApi
 
 
+Outputs:
+  LambdaFunction:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt CreateOrderFunction.Arn
 
-
+  DocumentDBEndpoint:
+    Description: "DocumentDB Cluster Endpoint"
+    Value: !GetAtt MyDocumentDBCluster.Endpoint
