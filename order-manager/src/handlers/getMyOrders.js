@@ -4,7 +4,7 @@ const Order = require("../models/orderModel");
 exports.handler = async (event) => {
   await connectDB();
 
-  order = await Order.findOne({});
+  order = await Order.find({});
   if (!order) return { statusCode: 404, body: "Order not found" };
 
   return {

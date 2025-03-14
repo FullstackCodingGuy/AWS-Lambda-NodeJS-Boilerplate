@@ -126,6 +126,84 @@ In your command line, from the sam-app project directory, run the following:
 sam delete
 ```
 
+
+### **🚨 Recovering from Accidental S3 Bucket Deletion in AWS SAM**  
+
+If you've **accidentally deleted the S3 bucket** used by **AWS SAM**, you’ll need to **create a new bucket** and **remap it** to AWS SAM.
+
+---
+
+## **1️⃣ Create a New S3 Bucket**
+You can manually create an S3 bucket or use the AWS CLI:
+
+```sh
+aws s3 mb s3://my-new-sam-bucket --region us-east-1
+```
+🔹 Replace **`my-new-sam-bucket`** with a unique bucket name.  
+🔹 Replace **`us-east-1`** with your AWS region.
+
+---
+
+## **2️⃣ Update AWS SAM to Use the New Bucket**
+Modify your **SAM configuration file (`samconfig.toml`)** to reference the new bucket.
+
+🔹 **Locate `samconfig.toml`** in your project.  
+🔹 Update the `s3_bucket` value:
+
+```toml
+[default.deploy.parameters]
+s3_bucket = "my-new-sam-bucket"
+s3_prefix = "my-app"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+stack_name = "my-app-stack"
+```
+
+Alternatively, specify the new bucket during deployment:
+
+```sh
+sam deploy --s3-bucket my-new-sam-bucket
+```
+
+---
+
+## **3️⃣ Rebuild and Deploy AWS SAM**
+Run the following to rebuild and redeploy:
+
+```sh
+sam build
+sam deploy --guided
+```
+
+This ensures that SAM now uses the **new S3 bucket**.
+
+---
+
+## **4️⃣ Optional: Clean Up Old References**
+If AWS SAM was using a **deleted bucket**, you might encounter an error like:  
+
+🚨 **"The specified bucket does not exist"**  
+
+To fix this:
+- **Check `.aws-sam` directory**:  
+  ```sh
+  rm -rf .aws-sam
+  ```
+- **Clear SAM cache** (if needed):
+  ```sh
+  sam cache clear
+  ```
+- Then **rebuild & deploy** again.
+
+---
+
+### **✅ Summary**
+✔️ **Created a new S3 bucket**  
+✔️ **Updated AWS SAM to use the new bucket**  
+✔️ **Rebuilt & deployed the application**  
+
+
+
 ### References
 
 - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html

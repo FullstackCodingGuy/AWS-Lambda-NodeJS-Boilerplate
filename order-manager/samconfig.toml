@@ -15,15 +15,16 @@ lint = true
 [default.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
-resolve_s3 = true
-stack_name = "order-manager-stack"
+resolve_s3 = false
+s3_bucket = "order-manager-stack-bucket"
 s3_prefix = "order-manager-stack"
 region = "us-east-1"
 disable_rollback = true
 image_repositories = []
+parameter_overrides = "HOSTINGENV=\"Production\""
 
 [default.package.parameters]
-resolve_s3 = true
+resolve_s3 = false
 
 [default.sync.parameters]
 watch = true

@@ -14,6 +14,7 @@ Parameters:
     Default: "Production"
 
 Resources:
+
   OrderApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -24,13 +25,6 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: OrderQueue
-
-  OrderCache:
-    Type: AWS::ElastiCache::CacheCluster
-    Properties:
-      Engine: redis
-      CacheNodeType: cache.t2.micro
-      NumCacheNodes: 1
 
   CreateOrderFunction:
     Type: AWS::Serverless::Function
@@ -50,7 +44,7 @@ Resources:
         Variables:
           HOSTING_ENV: !Ref HOSTINGENV
           DB_URI: ""
-          REDIS_HOST: !GetAtt OrderCache.RedisEndpoint.Address
+          REDIS_HOST: ""
           SQS_URL: !Ref OrderQueue
           MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
       Events:
@@ -79,7 +73,7 @@ Resources:
         Variables:
           HOSTING_ENV: !Ref HOSTINGENV
           DB_URI: ""
-          REDIS_HOST: !GetAtt OrderCache.RedisEndpoint.Address
+          REDIS_HOST: ""
           MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
       Events:
         ApiEvent:
@@ -88,20 +82,3 @@ Resources:
             Path: /myorders
             Method: post
             RestApiId: !Ref OrderApi
-
-  ProcessQueueFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/
-      Handler: handlers/processQueue.handler
-      Runtime: nodejs22.x
-      MemorySize: 128
-      Timeout: 10
-      Policies:
-        - AWSLambdaSQSQueueExecutionRole
-      Events:
-        SQSEvent:
-          Type: SQS
-          Properties:
-            Queue: !GetAtt OrderQueue.Arn
-            BatchSize: 5
