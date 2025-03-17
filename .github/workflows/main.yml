@@ -2,13 +2,14 @@ on:
   push:
     branches:
       - main
+defaults:
+  run:
+    working-directory: ./order-manager
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: setup working dir
-        working-directory: ./order-manager
       - run: sam validate
       - run: sam build --use-container
       - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
