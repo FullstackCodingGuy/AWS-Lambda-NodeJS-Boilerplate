@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+
+  Function:
+    Timeout: 3
+
+Parameters:
+
+  HOSTINGENV:
+    Type: String
+    Description: "Ex: Development, Staging, Production"
+    Default: "Production"
+  
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: "The VPC ID where resources will be created"
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: "The subnet IDs within the VPC"
+  SecurityGroupIds:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: "The security group IDs within the VPC"
+
+
+Resources:
+
+  OrderApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: OrderServiceAPI
+      StageName: v1
+
+  OrderQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: OrderQueue
+
+  CreateOrderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/createOrder.handler
+      Runtime: nodejs22.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaSQSQueueExecutionRole
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
+      Environment:
+        Variables:
+          HOSTING_ENV: !Ref HOSTINGENV
+          DB_URI: ""
+          REDIS_HOST: ""
+          SQS_URL: !Ref OrderQueue
+          MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
+      VpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref SubnetIds
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /orders
+            Method: post
+            RestApiId: !Ref OrderApi
+          
+  GetMyOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/getMyOrders.handler
+      Runtime: nodejs22.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaSQSQueueExecutionRole
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
+      Environment:
+        Variables:
+          HOSTING_ENV: !Ref HOSTINGENV
+          DB_URI: ""
+          REDIS_HOST: ""
+          MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
+      VpcConfig:
+        SecurityGroupIds: !Ref SecurityGroupIds
+        SubnetIds: !Ref SubnetIds
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /myorders
+            Method: post
+            RestApiId: !Ref OrderApi
+
+
+
+
