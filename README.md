@@ -3,16 +3,23 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
 [![SAM Deploy](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml/badge.svg)](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml)
 
-### How to run the workflow?
+### Deploy the Lambda function using GitHub Actions?
 
-```
-- Go to [Actions](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions)
-- Select **"SAM Deploy"**
-- Click "Run Workflow" dropdown on the right hand side
+- Step 1: Fork this repository
+- Step 2: Configure valid AWS credentials in your cloned repository's **"Settings"** tab -> **"Secrets and Variables"** -> **"Repository Secrets"** Section
+  
+![image](https://github.com/user-attachments/assets/fca4303d-f513-4e2d-9292-e4692266caa5)
+![image](https://github.com/user-attachments/assets/7f67c523-4746-4230-8250-5720f6ee3f36)
+
+- Step 3: Go to [Actions](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions)
+- Step 4: Select **"SAM Deploy"**
+- Step 5: Click **"Run Workflow"** dropdown on the right hand side
+
 ![image](https://github.com/user-attachments/assets/145856fc-caf5-471c-943f-6a926471db15)
-- Verify all the inputs and click "Run Workflow" to trigger the deployment 
 
-```
+- Step 6: Verify all the inputs and click **"Run Workflow"** to trigger the deployment
+- Step 7: Your deployment is triggered, check the task logs.
+
 
 ---
 ### Features
