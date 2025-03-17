@@ -19,14 +19,12 @@ on:
         description: 'Select Environment'
         type: environment
         required: true
-env:
-  stack: ${{ github.event.inputs.stackname }}
-defaults:
-  run:
-    working-directory: "./${{ github.event.inputs.stackname }}"
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./${{ github.event.inputs.stackname }}"
     steps:
       - uses: actions/checkout@v3
       - run: sam validate
