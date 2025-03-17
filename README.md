@@ -5,12 +5,14 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
 ### Features
 
-- API Gateway → Exposes endpoints for CRUD operations.
-- AWS Lambda → Handles business logic for order management.
-- Amazon DocumentDB (MongoDB-compatible) → Stores order data.
-- Amazon SQS → Handles message queue processing.
-- Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
-- AWS SAM (Serverless Application Model) → Defines infrastructure as code.
+- [x] API Gateway → Exposes endpoints for CRUD operations.
+- [x] AWS Lambda - Hello World
+- [ ] AWS Lambda → Handles business logic for order management.
+- [ ] Amazon DocumentDB (MongoDB-compatible) → Stores order data.
+- [ ] Amazon SQS → Handles message queue processing.
+- [ ] Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
+- [x] AWS SAM (Serverless Application Model) → Defines infrastructure as code.
+- [x] Deployment Pipeline using Github actions (manual trigger)
 
 ---
 
