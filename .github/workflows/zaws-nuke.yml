@@ -16,7 +16,7 @@ jobs:
   aws_nuke:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/ekristen/aws-nuke
+      image: quay.io/rebuy/aws-nuke:v2.17.0
       options: --user root
     steps:
     - name: checkout repo
