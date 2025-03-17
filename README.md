@@ -1,9 +1,22 @@
-![image](https://github.com/user-attachments/assets/49423d22-160c-4fcb-ad08-9f3a315b03fe)# AWS-Lambda-NodeJS-Boilerplate
+# AWS-Lambda-NodeJS-Boilerplate
 Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
 [![SAM Deploy](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml/badge.svg)](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml)
 
+### Features
+
+- API Gateway → Exposes endpoints for CRUD operations.
+- AWS Lambda → Handles business logic for order management.
+- Amazon DocumentDB (MongoDB-compatible) → Stores order data.
+- Amazon SQS → Handles message queue processing.
+- Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
+- AWS SAM (Serverless Application Model) → Defines infrastructure as code.
+
+---
+
 ### Deploy the Lambda function using GitHub Actions?
+<details>
+  <summary>read</summary>
 
 - Step 1: Fork this repository
 - Step 2: Configure valid AWS credentials in your cloned repository's **"Settings"** tab -> **"Secrets and Variables"** -> **"Repository Secrets"** Section
@@ -23,19 +36,13 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
   ![image](https://github.com/user-attachments/assets/30458259-c6b5-4d84-bf00-7f104a11f0a0)
   ![image](https://github.com/user-attachments/assets/230ee1b3-106e-445d-a89d-7f5e3667aa56)
 
-
+</details>
 
 ---
-### Features
+### Setup your dev environment
+<details>
+  <summary>read</summary>
 
-- API Gateway → Exposes endpoints for CRUD operations.
-- AWS Lambda → Handles business logic for order management.
-- Amazon DocumentDB (MongoDB-compatible) → Stores order data.
-- Amazon SQS → Handles message queue processing.
-- Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
-- AWS SAM (Serverless Application Model) → Defines infrastructure as code.
-
-----
 
 1️⃣ **template.yaml (AWS SAM Template)**
 > Defines the Lambda functions, API Gateway, SQS, and ElastiCache.
@@ -228,6 +235,8 @@ To fix this:
 ✔️ **Created a new S3 bucket**  
 ✔️ **Updated AWS SAM to use the new bucket**  
 ✔️ **Rebuilt & deployed the application**  
+
+</details>
 
 ### **Github Actions**
 
