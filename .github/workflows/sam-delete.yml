@@ -1,5 +1,5 @@
 name: "SAM Delete"
-run-name: Delete the Stack
+run-name: Delete the Stack in ${{ github.event.inputs.environment }} environment.
 on:
   workflow_dispatch:
     inputs:
