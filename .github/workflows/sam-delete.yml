@@ -1,12 +1,28 @@
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Test scenario tags'
+        required: false
+        type: boolean
+      environment:
+        description: 'Select Environment'
+        type: environment
+        required: true
 defaults:
   run:
     working-directory: ./order-manager
 jobs:
-  deploy:
+  delete-stack:
     runs-on: ubuntu-latest
     steps:
       - uses: aws-actions/setup-sam@v2
