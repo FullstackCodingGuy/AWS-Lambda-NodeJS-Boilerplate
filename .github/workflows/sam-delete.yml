@@ -12,10 +12,10 @@ on:
         - info
         - warning
         - debug
-      tags:
-        description: 'Test scenario tags'
-        required: false
-        type: boolean
+      # tags:
+      #   description: 'Test scenario tags'
+      #   required: false
+      #   type: boolean
       environment:
         description: 'Select Environment'
         type: environment
@@ -27,6 +27,8 @@ jobs:
   delete-stack:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - run: sam validate
       - uses: aws-actions/setup-sam@v2
       - uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
