@@ -1,5 +1,5 @@
 name: "SAM Delete"
-run-name: Delete the Stack in ${{ github.event.inputs.environment }} environment.
+run-name: Delete the Stack '${{ github.event.inputs.stackname }}' in ${{ github.event.inputs.environment }} environment.
 on:
   workflow_dispatch:
     inputs:
@@ -24,7 +24,7 @@ on:
           - us-east-2
       stackname:
         type: choice
-        description: CFN Stack Name
+        description: App Name
         options: 
           - hello-world
           - order-manager
@@ -32,12 +32,12 @@ on:
         description: 'Select Environment'
         type: environment
         required: true
-defaults:
-  run:
-    working-directory: ./order-manager
 jobs:
   delete-stack:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./${{ github.event.inputs.stackname }}"
     steps:
       - uses: actions/checkout@v3
       - run: sam validate
@@ -48,4 +48,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
-      - run: sam delete --no-prompts --region ${{ github.event.inputs.region }} --stack-name ${{ github.event.inputs.stackname }}
+      - run: sam delete --no-prompts

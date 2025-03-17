@@ -1,5 +1,5 @@
 name: "SAM Deploy"
-run-name: Deploy the Stack in ${{ github.event.inputs.environment }} environment.
+run-name: Deploy the Stack '${{ github.event.inputs.stackname }}' in ${{ github.event.inputs.environment }} environment.
 on:
   workflow_dispatch:
     inputs:
@@ -11,7 +11,7 @@ on:
           - us-east-2
       stackname:
         type: choice
-        description: CFN Stack Name
+        description: App Name
         options: 
           - hello-world
           - order-manager
@@ -19,14 +19,12 @@ on:
         description: 'Select Environment'
         type: environment
         required: true
-env:
-  stack: ${{ github.event.inputs.stackname }}
-defaults:
-  run:
-    working-directory: "./${{ github.event.inputs.stackname }}"
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./${{ github.event.inputs.stackname }}"
     steps:
       - uses: actions/checkout@v3
       - run: sam validate
