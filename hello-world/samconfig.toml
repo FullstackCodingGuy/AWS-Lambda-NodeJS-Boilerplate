@@ -3,7 +3,7 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "hello-world-stack"
+stack_name = "hello-world"
 
 [default.build.parameters]
 cached = true
@@ -16,11 +16,6 @@ lint = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-s3_prefix = "hello-world-stack"
-region = "us-east-1"
-disable_rollback = true
-image_repositories = []
-parameter_overrides = "HOSTINGENV=\"Production\""
 
 [default.package.parameters]
 resolve_s3 = true
