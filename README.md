@@ -3,6 +3,20 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
 [![SAM Deploy](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml/badge.svg)](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml)
 
+### How to run the workflow?
+
+```
+- Go to [Actions](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions)
+- Select **"SAM Deploy"**
+- Click "Run Workflow" dropdown on the right hand side
+![image](https://github.com/user-attachments/assets/145856fc-caf5-471c-943f-6a926471db15)
+- Verify all the inputs and click "Run Workflow" to trigger the deployment 
+
+```
+
+---
+### Features
+
 - API Gateway → Exposes endpoints for CRUD operations.
 - AWS Lambda → Handles business logic for order management.
 - Amazon DocumentDB (MongoDB-compatible) → Stores order data.
