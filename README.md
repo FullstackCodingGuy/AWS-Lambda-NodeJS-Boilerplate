@@ -1,6 +1,8 @@
 # AWS-Lambda-NodeJS-Boilerplate
 Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
+[![SAM Deploy](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml/badge.svg)](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml)
+
 - API Gateway → Exposes endpoints for CRUD operations.
 - AWS Lambda → Handles business logic for order management.
 - Amazon DocumentDB (MongoDB-compatible) → Stores order data.
