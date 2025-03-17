@@ -1,4 +1,4 @@
-# AWS-Lambda-NodeJS-Boilerplate
+![image](https://github.com/user-attachments/assets/49423d22-160c-4fcb-ad08-9f3a315b03fe)# AWS-Lambda-NodeJS-Boilerplate
 Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 
 [![SAM Deploy](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml/badge.svg)](https://github.com/FullstackCodingGuy/AWS-Lambda-NodeJS-Boilerplate/actions/workflows/sam-deploy.yml)
@@ -18,7 +18,11 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 ![image](https://github.com/user-attachments/assets/145856fc-caf5-471c-943f-6a926471db15)
 
 - Step 6: Verify all the inputs and click **"Run Workflow"** to trigger the deployment
-- Step 7: Your deployment is triggered, check the task logs.
+- Step 7: Your deployment is triggered, monitor the workflow logs until completion.
+- Step 8: Once the workflow steps are completed successfully, expand this step to gather the deployment endpoint of your lambda function.
+  ![image](https://github.com/user-attachments/assets/30458259-c6b5-4d84-bf00-7f104a11f0a0)
+  ![image](https://github.com/user-attachments/assets/230ee1b3-106e-445d-a89d-7f5e3667aa56)
+
 
 
 ---
