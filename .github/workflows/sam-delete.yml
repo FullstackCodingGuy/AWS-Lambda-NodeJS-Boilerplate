@@ -26,8 +26,8 @@ on:
         type: choice
         description: CFN Stack Name
         options: 
-          - hello-world-stack
-          - order-manager-stack
+          - hello-world
+          - order-manager
       environment:
         description: 'Select Environment'
         type: environment

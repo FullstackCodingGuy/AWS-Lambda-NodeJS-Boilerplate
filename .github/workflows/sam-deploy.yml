@@ -1,13 +1,29 @@
-name: "CD - SAM Deploy"
+name: "SAM Deploy"
+run-name: Deploy the Stack in ${{ github.event.inputs.environment }} environment.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - order-manager
+  workflow_dispatch:
+    inputs:
+      region:
+        type: choice
+        description: AWS Region
+        options: 
+          - us-east-1
+          - us-east-2
+      stackname:
+        type: choice
+        description: CFN Stack Name
+        options: 
+          - hello-world
+          - order-manager
+      environment:
+        description: 'Select Environment'
+        type: environment
+        required: true
+env:
+  stack: ${{ github.event.inputs.stackname }}
 defaults:
   run:
-    working-directory: ./order-manager
+    working-directory: "./${{ github.event.inputs.stackname }}"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,7 +35,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ github.event.inputs.region }}
       - run: sam build --use-container
       # Run Unit tests- Specify unit tests here 
 
