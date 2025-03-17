@@ -202,7 +202,9 @@ To fix this:
 ✔️ **Updated AWS SAM to use the new bucket**  
 ✔️ **Rebuilt & deployed the application**  
 
+### **Github Actions**
 
+- https://aws.amazon.com/blogs/compute/using-github-actions-to-deploy-serverless-applications/
 
 ### References
 
