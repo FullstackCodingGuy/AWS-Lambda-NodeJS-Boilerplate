@@ -1,0 +1,33 @@
+name: "ZAWS NUKE"
+run-name: Nuke my resources.
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+jobs:
+  aws_nuke:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/ekristen/aws-nuke
+      options: --user root
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+    - name: run aws-nuke
+      run: |-
+        aws-nuke version
+        aws-nuke -c ${GITHUB_WORKSPACE}/nuke.yml --force --no-dry-run --force-sleep 3
