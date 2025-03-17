@@ -8,7 +8,7 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 - Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
 - AWS SAM (Serverless Application Model) → Defines infrastructure as code.
 
----
+----
 
 1️⃣ **template.yaml (AWS SAM Template)**
 > Defines the Lambda functions, API Gateway, SQS, and ElastiCache.
