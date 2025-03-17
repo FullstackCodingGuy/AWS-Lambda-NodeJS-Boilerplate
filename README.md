@@ -13,6 +13,9 @@ Boilerplate code for AWS Lambda Function - using NodeJS runtime.
 - [ ] Amazon ElastiCache (Redis) → Caches order details for fast retrieval.
 - [x] AWS SAM (Serverless Application Model) → Defines infrastructure as code.
 - [x] Deployment Pipeline using Github actions (manual trigger)
+- [ ] Authentication
+- [ ] Authorization
+- [ ] GraphQL - for order details
 
 ---
 
