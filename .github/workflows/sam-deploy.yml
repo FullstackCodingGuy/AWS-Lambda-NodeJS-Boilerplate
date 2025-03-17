@@ -11,7 +11,7 @@ on:
           - us-east-2
       stackname:
         type: choice
-        description: CFN Stack Name
+        description: App Name
         options: 
           - hello-world
           - order-manager
@@ -27,15 +27,15 @@ jobs:
         working-directory: "./${{ github.event.inputs.stackname }}"
     steps:
       - uses: actions/checkout@v3
-      - run: sam validate
+      - run: sam validate --region ${{ github.event.inputs.region }} --stack-name ${{ github.event.inputs.stackname }}
       - uses: aws-actions/setup-sam@v2
       - uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ github.event.inputs.region }}
-      - run: sam build --use-container
+      - run: sam build --use-container --region ${{ github.event.inputs.region }} --stack-name ${{ github.event.inputs.stackname }}
       # Run Unit tests- Specify unit tests here 
 
       # Sam Deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --region ${{ github.event.inputs.region }} --stack-name ${{ github.event.inputs.stackname }}
