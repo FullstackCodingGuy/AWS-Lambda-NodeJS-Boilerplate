@@ -23,7 +23,7 @@ This command will start a Redis server on localhost at port 6379.
 ```
 
 
-### Commands you can use next
+### Commands you can use next.
 - Create pipeline: ```cd order-manager && sam pipeline init --bootstrap```
 - Validate SAM template: ```cd order-manager && sam validate```
 - Test Function in the Cloud: ```cd order-manager && sam sync --stack-name {stack-name} --watch```
