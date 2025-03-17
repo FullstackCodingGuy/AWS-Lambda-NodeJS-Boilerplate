@@ -16,6 +16,18 @@ on:
       #   description: 'Test scenario tags'
       #   required: false
       #   type: boolean
+      region:
+        type: choice
+        description: AWS Region
+        options: 
+          - us-east-1
+          - us-east-2
+      stackname:
+        type: choice
+        description: CFN Stack Name
+        options: 
+          - hello-world-stack
+          - order-manager-stack
       environment:
         description: 'Select Environment'
         type: environment
@@ -36,4 +48,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       
-      - run: sam delete --no-confirm-changeset --no-fail-on-empty-changeset
+      - run: sam delete --no-prompts --region ${{ github.event.inputs.region }} --stack-name ${{ github.event.inputs.stackname }}
