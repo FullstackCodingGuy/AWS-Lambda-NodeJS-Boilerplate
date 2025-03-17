@@ -1,3 +1,5 @@
+name: "SAM Delete"
+run-name: Delete the Stack
 on:
   workflow_dispatch:
     inputs:
