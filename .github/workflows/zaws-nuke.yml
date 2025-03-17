@@ -30,4 +30,4 @@ jobs:
     - name: run aws-nuke
       run: |-
         aws-nuke version
-        aws-nuke --force --no-dry-run --force-sleep 3
+        aws-nuke nuke --force --no-dry-run --force-sleep 3
