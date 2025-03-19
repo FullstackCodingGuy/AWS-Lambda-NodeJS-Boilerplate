@@ -13,15 +13,15 @@ Parameters:
     Description: "Ex: Development, Staging, Production"
     Default: "Production"
   
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: "The VPC ID where resources will be created"
-  SubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: "The subnet IDs within the VPC"
-  SecurityGroupIds:
-    Type: List<AWS::EC2::SecurityGroup::Id>
-    Description: "The security group IDs within the VPC"
+  # VpcId:
+  #   Type: AWS::EC2::VPC::Id
+  #   Description: "The VPC ID where resources will be created"
+  # SubnetIds:
+  #   Type: List<AWS::EC2::Subnet::Id>
+  #   Description: "The subnet IDs within the VPC"
+  # SecurityGroupIds:
+  #   Type: List<AWS::EC2::SecurityGroup::Id>
+  #   Description: "The security group IDs within the VPC"
 
 
 Resources:
