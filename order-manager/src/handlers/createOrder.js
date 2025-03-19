@@ -4,7 +4,10 @@ const Order = require("../models/orderModel");
 // const { sendToQueue } = require("../utils/sqs");
 const { v4: uuidv4 } = require("uuid");
 
-const AWS = require('aws-sdk');
+const DynamoDBClient = require('@aws-sdk/client-dynamodb');
+const client = new DynamoDBClient({});
+const docClient = DynamoDBDocumentClient.from(client);
+
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const ordersTable = "OrdersTable";
@@ -15,26 +18,16 @@ exports.handler = async (event) => {
 
     console.log('Environment:', process.env);
 
-    const res = await dynamodb.get({
-      TableName: ordersTable,
-      Key: { "id": "3" }
-    }).promise();
-
-    console.log("res from get item:", res);
-    console.log("item from res: ", res.Item);
-
-    const newCount = res.Item.count + 1;
-
-    const res2 = await dynamodb.put({
+    const command = new PutCommand({
       TableName: ordersTable,
       Item: {
-        "id": "3",
-        "count": newCount
-      }
-    }).promise();
+        id: uuidv4(),
+        name: "test1"
+      },
+    });
 
-    console.log("res2 after update: ", res2);
-
+    const order = await docClient.send(command);
+    console.log(order);
 
     // await connectDB();
 

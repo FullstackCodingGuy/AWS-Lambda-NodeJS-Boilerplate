@@ -1,18 +1,16 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Globals:
-
   Function:
     Timeout: 10
 
 Parameters:
-
   HOSTINGENV:
     Type: String
     Description: "Ex: Development, Staging, Production"
     Default: "Production"
-  
+
   # VpcId:
   #   Type: AWS::EC2::VPC::Id
   #   Description: "The VPC ID where resources will be created"
@@ -23,9 +21,7 @@ Parameters:
   #   Type: List<AWS::EC2::SecurityGroup::Id>
   #   Description: "The security group IDs within the VPC"
 
-
 Resources:
-
   OrderApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -69,7 +65,7 @@ Resources:
             Path: /orders
             Method: post
             RestApiId: !Ref OrderApi
-          
+
   # GetMyOrdersFunction:
   #   Type: AWS::Serverless::Function
   #   Properties:
@@ -102,6 +98,13 @@ Resources:
   #           Method: post
   #           RestApiId: !Ref OrderApi
 
-
-
-
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Create Order function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/orders"
+  HelloWorldFunction:
+    Description: "Create Order Lambda Function ARN"
+    Value: !GetAtt CreateOrderFunction.Arn
