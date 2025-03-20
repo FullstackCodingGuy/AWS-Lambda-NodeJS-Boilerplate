@@ -113,34 +113,34 @@ Resources:
             Method: get
             RestApiId: !Ref OrderApi
 
-    GetOrderFunction:
-      Type: AWS::Serverless::Function
-      Properties:
-        CodeUri: src/
-        Handler: handlers/getOrder.handler
-        Runtime: nodejs22.x
-        MemorySize: 128
-        Timeout: 10
-        Policies:
-          - DynamoDBCrudPolicy:
-              TableName: 
-                !Ref DynamoDBOrdersTable
-          - AWSLambdaVPCAccessExecutionRole
-          - AmazonDynamoDBFullAccess
-          - AWSLambdaSQSQueueExecutionRole
-          - AWSLambdaBasicExecutionRole
-          - AWSSecretsManagerGetSecretValuePolicy:
-              SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
-        Environment:
-          Variables:
-            HOSTING_ENV: !Ref HOSTINGENV
-        Events:
-          ApiEvent:
-            Type: Api
-            Properties:
-              Path: /orders/{id}
-              Method: get
-              RestApiId: !Ref OrderApi
+  GetOrderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/getOrder.handler
+      Runtime: nodejs22.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 
+              !Ref DynamoDBOrdersTable
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaSQSQueueExecutionRole
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
+      Environment:
+        Variables:
+          HOSTING_ENV: !Ref HOSTINGENV
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /orders/{id}
+            Method: get
+            RestApiId: !Ref OrderApi
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

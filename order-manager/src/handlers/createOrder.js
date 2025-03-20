@@ -25,19 +25,19 @@ exports.handler = async (event) => {
 
     // Payload Sample
 
-    // {
-    //   "id": "2",
-    //   "items": [
-    //     {
-    //       "id": "1",
-    //       "name": "tv"
-    //     },
-    //     {
-    //       "id": "2",
-    //       "name": "monitor"
-    //     }
-    //   ]
-    // }
+    {
+      "id": "2",
+      "items": [
+        {
+          "id": "1",
+          "name": "tv"
+        },
+        {
+          "id": "2",
+          "name": "monitor"
+        }
+      ]
+    }
 
 
     // await setCache(`order:${order.orderId}`, order);

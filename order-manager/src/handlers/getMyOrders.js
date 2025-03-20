@@ -2,14 +2,14 @@ const dbContext = require("../utils/dbContext");
 
 exports.handler = async (event) => {
 
-  const body = await dbContext.Orders().Scan();
+  const items = await dbContext.Orders().Scan();
 
-  console.log('items: ', body.Items)
+  console.log('items: ', items)
 
-  if (!body || !body.Items) return { statusCode: 404, body: "Orders not found" };
+  if (!items) return { statusCode: 404, body: "Orders not found" };
 
   return {
     statusCode: 200,
-    body: JSON.stringify(body.Items),
+    body: JSON.stringify(items),
   };
 };
