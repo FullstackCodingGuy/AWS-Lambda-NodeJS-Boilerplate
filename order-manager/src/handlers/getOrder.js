@@ -3,6 +3,11 @@ const dbContext = require("../utils/dbContext");
 
 exports.handler = async (event) => {
 
+  console.log('get-order-event: ', event)
+  if (!event || !event.pathParameters || !event.pathParameters.id) {
+    throw 'Invalid parameters specified.'
+  }
+
   const id = event.pathParameters.id;
   // let order = await getCache(`order:${orderId}`);
 
@@ -13,6 +18,13 @@ exports.handler = async (event) => {
   // }
 
   const order = dbContext.Orders().Get({ id });
+
+  if (!order) {
+    return {
+      statusCode: 404,
+      body: 'Data not found for the give id.'
+    };
+  }
 
   return {
     statusCode: 200,

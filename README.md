@@ -250,3 +250,5 @@ To fix this:
 ### References
 
 - https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html
+- [JavaScript environment for the SubmitData App tutorial](https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javascriptv3/example_code/cross-services/submit-data-app)
+- 
