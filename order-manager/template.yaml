@@ -27,6 +27,12 @@ Resources:
     Properties:
       Name: OrderServiceAPI
       StageName: v1
+      Cors:
+        AllowMethods: "'PUT, POST, GET'"
+        AllowHeaders: "'X-Forwarded-For'"
+        AllowOrigin: "*"
+        MaxAge: "'600'"
+        AllowCredentials: true
       Tags:
         AppGroup: OrdersLambda
         AppType: Serverless

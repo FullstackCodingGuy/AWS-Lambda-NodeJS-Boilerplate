@@ -17,7 +17,7 @@ exports.handler = async (event) => {
   //   await setCache(`order:${orderId}`, order);
   // }
 
-  const order = dbContext.Orders().Get({ id });
+  const order = await dbContext.Orders().Get({ id });
 
   if (!order) {
     return {
