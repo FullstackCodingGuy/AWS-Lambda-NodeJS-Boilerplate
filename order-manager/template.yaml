@@ -84,37 +84,34 @@ Resources:
         AppGroup: OrdersLambda
         AppType: Serverless
 
-  # GetMyOrdersFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: src/
-  #     Handler: handlers/getMyOrders.handler
-  #     Runtime: nodejs22.x
-  #     MemorySize: 128
-  #     Timeout: 10
-  #     Policies:
-  #       - AWSLambdaVPCAccessExecutionRole
-  #       - AmazonDynamoDBFullAccess
-  #       - AWSLambdaSQSQueueExecutionRole
-  #       - AWSLambdaBasicExecutionRole
-  #       - AWSSecretsManagerGetSecretValuePolicy:
-  #           SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
-  #     Environment:
-  #       Variables:
-  #         HOSTING_ENV: !Ref HOSTINGENV
-  #         DB_URI: ""
-  #         REDIS_HOST: ""
-  #         MONGODB_SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials"
-  #     VpcConfig:
-  #       SecurityGroupIds: !Ref SecurityGroupIds
-  #       SubnetIds: !Ref SubnetIds
-  #     Events:
-  #       ApiEvent:
-  #         Type: Api
-  #         Properties:
-  #           Path: /myorders
-  #           Method: post
-  #           RestApiId: !Ref OrderApi
+  GetMyOrdersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers/getMyOrders.handler
+      Runtime: nodejs22.x
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 
+              !Ref DynamoDBOrdersTable
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonDynamoDBFullAccess
+        - AWSLambdaSQSQueueExecutionRole
+        - AWSLambdaBasicExecutionRole
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:mongodb/credentials-*"
+      Environment:
+        Variables:
+          HOSTING_ENV: !Ref HOSTINGENV
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /myorders
+            Method: get
+            RestApiId: !Ref OrderApi
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function

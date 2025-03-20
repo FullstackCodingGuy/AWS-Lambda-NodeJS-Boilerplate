@@ -1,5 +1,3 @@
-const connectDB = require("../utils/db");
-const Order = require("../models/orderModel");
 // const { setCache } = require("../utils/cache");
 // const { sendToQueue } = require("../utils/sqs");
 const { v4: uuidv4 } = require("uuid");
@@ -19,10 +17,8 @@ exports.handler = async (event) => {
       throw 'Items not configured in the payload'
     }
 
-    console.log('Processing Order Id:', id, ', Item Count: ', items.length);
-
     const order = {
-      id,
+      id: uuidv4(),
       items
     };
 
@@ -35,6 +31,7 @@ exports.handler = async (event) => {
     console.log('order-created:', order, response);
 
     // Payload Sample
+
     // {
     //   "id": "2",
     //   "items": [
