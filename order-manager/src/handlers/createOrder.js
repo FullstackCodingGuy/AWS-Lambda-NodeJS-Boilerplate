@@ -3,42 +3,52 @@ const Order = require("../models/orderModel");
 // const { setCache } = require("../utils/cache");
 // const { sendToQueue } = require("../utils/sqs");
 const { v4: uuidv4 } = require("uuid");
-
-const DynamoDBClient = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { PutCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
-
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
 const ordersTable = "OrdersTable";
 
 
 exports.handler = async (event) => {
   try {
 
-    console.log('Environment:', process.env);
+    const { id, items } = event;
+
+    if (!items || !items.length) {
+      throw 'Items not configured in the payload'
+    }
+
+    console.log('Processing Order Id:', id, ', Item Count: ', items.length);
+
+    const order = {
+      id,
+      items
+    };
 
     const command = new PutCommand({
       TableName: ordersTable,
-      Item: {
-        id: uuidv4(),
-        name: "test1"
-      },
+      Item: order,
     });
 
-    const order = await docClient.send(command);
-    console.log(order);
+    const response = await docClient.send(command);
+    console.log('order-created:', order, response);
 
-    // await connectDB();
+    // Payload Sample
+    // {
+    //   "id": "2",
+    //   "items": [
+    //     {
+    //       "id": "1",
+    //       "name": "tv"
+    //     },
+    //     {
+    //       "id": "2",
+    //       "name": "monitor"
+    //     }
+    //   ]
+    // }
 
-    // const { customerName, items } = JSON.parse(event.body);
-
-    // const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    // const order = new Order({ orderId: uuidv4(), customerName, items, totalAmount });
-    // await order.save();
-
-    // console.log('order-created:', order);
 
     // await setCache(`order:${order.orderId}`, order);
 
@@ -48,7 +58,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 201,
-      body: JSON.stringify({ message: "Order created", orderId: order.orderId }),
+      body: JSON.stringify({ message: "Order created", orderId: order.id }),
     };
   } catch (e) {
     console.log(e);

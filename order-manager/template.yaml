@@ -27,11 +27,27 @@ Resources:
     Properties:
       Name: OrderServiceAPI
       StageName: v1
+      Tags:
+        AppGroup: OrdersLambda
+        AppType: Serverless
 
   # OrderQueue:
   #   Type: AWS::SQS::Queue
   #   Properties:
   #     QueueName: OrderQueue
+
+  DynamoDBTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PointInTimeRecoverySpecification: PointInTimeRecoverySpecification
+      PrimaryKey: PrimaryKeyObject
+      ProvisionedThroughput: ProvisionedThroughput
+      SSESpecification: SSESpecification
+      TableName: OrdersTable
+      Tags:
+        AppGroup: OrdersLambda
+        AppType: Serverless
+
 
   CreateOrderFunction:
     Type: AWS::Serverless::Function
@@ -65,6 +81,9 @@ Resources:
             Path: /orders
             Method: post
             RestApiId: !Ref OrderApi
+      Tags:
+        AppGroup: OrdersLambda
+        AppType: Serverless
 
   # GetMyOrdersFunction:
   #   Type: AWS::Serverless::Function
