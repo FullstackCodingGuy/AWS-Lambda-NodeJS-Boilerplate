@@ -1,16 +1,8 @@
-const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { ScanCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
-const client = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(client);
-const ordersTable = "OrdersTable";
+const dbContext = require("../utils/dbContext");
 
 exports.handler = async (event) => {
 
-  const body = await dynamo.send(
-    new ScanCommand({
-      TableName: ordersTable,
-    })
-  );
+  const body = await dbContext.Orders().Scan();
 
   console.log('items: ', body.Items)
 

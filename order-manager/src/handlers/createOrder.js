@@ -1,17 +1,14 @@
 // const { setCache } = require("../utils/cache");
 // const { sendToQueue } = require("../utils/sqs");
 const { v4: uuidv4 } = require("uuid");
-const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { PutCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
-const client = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(client);
-const ordersTable = "OrdersTable";
+const dbContext = require("../utils/dbContext");
+
 
 
 exports.handler = async (event) => {
   try {
 
-    const { id, items } = event;
+    const { items } = event;
 
     if (!items || !items.length) {
       throw 'Items not configured in the payload'
@@ -22,12 +19,8 @@ exports.handler = async (event) => {
       items
     };
 
-    const command = new PutCommand({
-      TableName: ordersTable,
-      Item: order,
-    });
+    const response = await dbContext.Orders().Put(order);
 
-    const response = await docClient.send(command);
     console.log('order-created:', order, response);
 
     // Payload Sample
