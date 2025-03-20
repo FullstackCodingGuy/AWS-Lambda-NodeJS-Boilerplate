@@ -36,13 +36,9 @@ Resources:
   #   Properties:
   #     QueueName: OrderQueue
 
-  DynamoDBTable:
+  DynamoDBOrdersTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      PointInTimeRecoverySpecification: PointInTimeRecoverySpecification
-      PrimaryKey: PrimaryKeyObject
-      ProvisionedThroughput: ProvisionedThroughput
-      SSESpecification: SSESpecification
       TableName: OrdersTable
       Tags:
         AppGroup: OrdersLambda
@@ -58,6 +54,9 @@ Resources:
       MemorySize: 128
       Timeout: 10
       Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 
+              !Ref DynamoDBOrdersTable
         - AWSLambdaVPCAccessExecutionRole
         - AmazonDynamoDBFullAccess
         - AWSLambdaSQSQueueExecutionRole
